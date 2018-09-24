@@ -226,6 +226,51 @@ BigInteger BigInteger::operator^(int exp) const {
     return ans;
 }
 
+std::pair<BigInteger, BigInteger> BigInteger::divide(BigInteger a, BigInteger b) {
+    BigInteger quo = 0, rem = 0;
+    bool posQuo = !(a.positive ^ b.positive);
+    bool posRem = a.positive;
+    a = a.abs();
+    b = b.abs();
+    if(a < b) {
+        quo = 0;
+        rem = a;
+    } else if(a == b) {
+        quo = 1;
+        rem = 0;
+    } else {
+        int diff = 1;
+        while(b.length < a.length) {
+            b = b * BigInteger(BASE);
+            diff++;
+        }
+        for(int i = 0; i < diff; ++i) {
+            quo = quo * BigInteger(BASE);
+            while(a - b >= BigInteger(0)) {
+                a = a - b;
+                quo++;
+            }
+            if(i != diff - 1) {
+                b.data++;
+                b.length--;
+            }
+        }
+        b.data -= (diff - 1);
+        rem = a;
+    }
+    quo.positive = posQuo;
+    rem.positive = posRem;
+    return std::make_pair(quo, rem);
+}
+
+BigInteger BigInteger::operator/(const BigInteger& b) const {
+    return divide(*this, b).first;
+}
+
+BigInteger BigInteger::operator%(const BigInteger& b) const {
+    return divide(*this, b).second;
+}
+
 BigInteger& BigInteger::operator++() {
     *this = *this + BigInteger(1);
     return *this;
@@ -282,10 +327,3 @@ bool BigInteger::operator!=(const BigInteger& b) const {return !(*this == b);}
 bool BigInteger::operator<=(const BigInteger& b) const {return *this < b || *this == b;}
 bool BigInteger::operator>(const BigInteger& b) const {return !(*this < b || *this == b);}
 bool BigInteger::operator>=(const BigInteger& b) const {return !(*this < b);}
-
-//test
-int main() {
-    BigInteger a = 0, b = 1;
-    std::cin >> a >> b;
-    std::cout << (a^b) << std::endl;
-}

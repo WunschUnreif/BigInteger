@@ -51,7 +51,7 @@ public:
 
 protected:
     void clear();
-    std::pair<BigInteger, BigInteger> divide(const BigInteger& b) const;
+    static std::pair<BigInteger, BigInteger> divide(BigInteger a, BigInteger b);
     void trim();
 };
 
